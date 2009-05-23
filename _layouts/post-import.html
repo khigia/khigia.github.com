@@ -3,7 +3,7 @@ layout: master
 ---
 <div class='post'>
   <span class='date'>{{page.date | date_to_string}}</span>
-  <h1><a href='http://blog.khigia.net{{page.url}}'>{{page.title}}</a></h1>
+  <h1><a href='{{page.url}}'>{{page.title}}</a></h1>
   <div class='body'>{{ content }}</div>
   <h3>Post imported from <a href='http://khigia.wordpress.com'>wordpress</a></h3>
   <p>Please refer to <a href='{{page.wpimport-url}}'>original post</a> for earlier comments.</p>
@@ -25,7 +25,7 @@ layout: master
 -->
 
 <script type="text/javascript" charset="utf-8">
-  var disqus_url = "http://blog.khigia.net{{page.url}}";
+  var disqus_url = "http://blog.khigia.net/{{page.url}}";
 </script>
 <div id="disqus_thread"></div>
 <script type="text/javascript" src="http://disqus.com/forums/khi-notes/embed.js"></script>

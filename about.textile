@@ -1,5 +1,5 @@
 ---
-title: About Scott Chacon
+title: About Ludovic Coquelle
 layout: master
 ---
 
@@ -10,8 +10,3 @@ I am yet another blogger, with nothing really important to share, such that anyw
  * <a href='http://www.linkedin.com/in/coquelle' target='_blank' rel='me'>LinkedIn</a>
  * <a href='http://twitter.com/khigia' target='_blank' rel='me'>Twitter</a>
 
-
-h2. About This Site
-
-I clone the site from Scott Chacon and even this description is borrow from him:
-This site is built using the "Jekyll":http://github.com/mojombo/jekyll library and hosted on "GitHub":http://github.com/. The source code used to create this library is "publicly available on GitHub":http://github.com/khigia/khigia.github.com as well.
