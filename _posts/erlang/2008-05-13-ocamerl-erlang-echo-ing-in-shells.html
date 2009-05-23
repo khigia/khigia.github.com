@@ -1,0 +1,60 @@
+---
+layout: post-import
+title: "Ocamerl - Erlang ... echo-ing in shells"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2008/05/13/ocamerl-erlang-echo-ing-in-shells/"
+---
+Little intro step-by-step to the ocaml-erlang message exchange mechanism offered by ocamerl (a lib of erlocaml).<br/>
+Subject of the following code is a wonderfull application ... named "echo server"!
+<ol>
+	<li>In the interpretor shell of ocaml, we create a hidden erlang node and an activity to echo all received message (both on console as well as in respond to the caller).</li>
+	<li>In the erlang interpretor shell, we send few message and compare them to the received ones.</li>
+</ol>
+The following assumes code is running on machine "comp1".<br/>
+Ocaml shell:<br/>
+<pre><code>
+(* getting Ocamerl available in toplevel *)
+ocaml> #use "topfind";; (* ocamerl used findlib for install *)
+ocaml> #thread;; (* ocamerl is multithreaded app *)
+ocaml> #require "ocamerl";;
+(* creating/declaring a node, assuming epmd is running *)
+ocaml> let o1 = Ocamerl.Enode.run "o1" ~cookie:"cookie";;
+val o1 : Ocamerl.Enode.t = <abstr>
+(* creating/declaring a mbox, equivalent of erlang process *)
+ocaml> let m = Ocamerl.Enode.create_mbox o1;;
+val m : Ocamerl.Enode.Mbox.t = <abstr>
+ocaml> Ocamerl.Enode.register_mbox o1 m "echoer";; (* give it a name *)
+- : unit = ()
+ocaml> Ocamerl.Enode.Mbox.create_activity m (fun msg -> match msg with
+    | Ocamerl.Eterm.ET_tuple [|pid; any;|] ->
+        Printf.eprintf "MSG:%s\n%!" (Ocamerl.Eterm.to_string msg);
+        Ocamerl.Enode.send o1 pid any
+    | _ ->
+        () (* drop unexpected msg *)
+);;
+- : unit = ()
+</code></pre>
+Erlang shell:<br/>
+<pre><code>
+# starting erlang node with same cookie
+erl -sname e1 -setcookie cookie
+% check connection
+erl> pong = net_adm:ping(o1@comp1).
+pong
+% utility to print whatever is in message queue
+erl> F = fun() -> receive W -> io:format("got back: ~w~n", [W]) after 1 -> error end end.
+#Fun<erl_eval.20.67289768>
+% some tests ... send data, received it back
+erl> {echo1, o1@comp1} ! {self(), {1,2,"test"}}.
+{<0.37.0>,{1,2,"test"}}
+erl> F().
+got back: {1,2,[116,101,115,116]}
+ok
+% in the mean time, ocaml shell also display the data
+</code></pre>
+That's it! A wonderfull echo server :)<br/>
+Amongst things on the to-do list:
+<ul>
+	<li>Should not have to create a mbox and set its activity separately (need some wrapper)</li>
+	<li>Could have an onode ocaml toplevel which run one node by default and offer direct interface (e.g. "send").</li>
+</ul>

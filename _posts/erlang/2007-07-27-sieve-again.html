@@ -1,0 +1,9 @@
+---
+layout: post-import
+title: "Sieve again"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/07/27/sieve-again/"
+---
+I didn't known this was a so popular problem when I coded <a href="http://khigia.wordpress.com/2007/05/07/44/">a sieve</a> of Eratosthene using stream design from SICP.<br/>
+In fact, I saw <a href="http://video.google.com/videoplay?docid=810232012617965344">this video</a> about NewSqueak which present an example of a concurrent algorithm of the sieve, and in <a href="http://groups.google.de/group/comp.os.plan9/browse_thread/thread/951130abcfcf506e/8c4267a634a0524b?lnk=raot">this related discussion</a> on plan9 group I also found <a href="http://video.google.com/videoplay?docid=810232012617965344">an Haskell implementation</a> (more related to the stream design than to the concurrent design IMHO). I also had a look at <a href="http://swtch.com/libtask/">libtask</a> which offer a C version of the concurrent sieve.<br/>
+That's already a lot, so one more shouldn't be useful ... but I like this example, and thus here is <a href="http://paste.lisp.org/display/45190">my Erlang implementation</a> using a spawn for each prime in the sieve.

@@ -1,0 +1,27 @@
+---
+layout: post-import
+title: "Tiny progress on erlocaml"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2008/05/06/tiny-progress-on-erlocaml/"
+---
+Minor updates for <a href="http://code.google.com/p/erlocaml/">erlocaml</a> (more exactly on <a href="http://code.google.com/p/erlocaml/wiki/OcamerlIntro">ocamerl</a>) ... mostly code cleaning and minor refactoring!<br/>
+Only one new feature: ability for Erlang processes to send message to unregistered ocaml processes. An example of that is "ex_node_mult" which generalize "ex_node_double" by dynamically creating ocaml process to perform a multiplication ... yep I know, not very useful<br/>
+<pre><code>
+% erlang code using the ocaml node
+{byn, OcamlNode} ! {self(), 2},
+By2 = receive M -> M after 1 -> error,
+{byn, OcamlNode} ! {self(), 3},
+By3 = receive M -> M after 1 -> error,
+P1 = make_ref(),
+P2 = make_ref(),
+By2 ! {self(), P1, 21},
+By3 ! {self(), P1, 21},
+ok = receive {P1, 42} -> ok after 1 -> error end,
+ok = receive {P2, 63} -> ok after 1 -> error end
+</code></pre>
+With this feature, ocamerl begin to be usable ... and that's exactly what I will be doing next: experiment with more useful (at least less silly) examples! Some ideas are:
+<ul>
+	<li>tiny mapreduce example with ocaml workers (erlang doing the network part);</li>
+	<li>using the ocaml image processing lib from erlang (not best example as lot of data need to be exchange ... this is task to be solved for future erlocaml development);</li>
+	<li>others???</li>
+</ul>

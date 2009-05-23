@@ -1,0 +1,14 @@
+---
+layout: post-import
+title: "Erlang to call an Ocaml seam carving lib"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2008/05/10/erlang-to-call-an-ocaml-seam-carving-lib/"
+---
+Yet another useless example for <a href="http://code.google.com/p/erlocaml">erlocaml</a>, but this time it is not completely silly ... it does something :)<br/>
+In fact the project <a href="http://github.com/khigia/eocarve/tree/master">eocarve</a> uses:
+<ul>
+	<li>the <a href="http://code.google.com/p/erlocaml/wiki/OcamerlIntro">ocamerl</a> library (which got a <a href="http://code.google.com/p/erlocaml/source/browse/trunk/lib/ocamerl/Makefile">makefile install rule</a> for the occasion);</li>
+	<li>the <a href="http://eigenclass.org/hiki/seam-carving-in-ocaml">seamcarving</a> library provided by mce (thanks!) (it's LGPL so the full code can be found in eocarve).</li>
+</ul>
+Idea is simple: an ocaml node run and provide a API for Erlang node to call the seamcarving library. See <a href="http://github.com/khigia/eocarve/wikis">eocarve wiki</a> for details/example.<br/>
+Aim of this project was mainly to demonstrate use of ocamerl lib ... however it may be usefull for an Erlang web app which would need seamcarving (heavy weight for CPU!). Had fun to integrate those lib in same app.

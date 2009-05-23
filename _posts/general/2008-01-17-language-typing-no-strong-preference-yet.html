@@ -1,0 +1,11 @@
+---
+layout: post-import
+title: "Language typing: no strong preference yet!"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2008/01/17/language-typing-no-strong-preference-yet/"
+---
+Having used different kinds of language (C++, python, ruby, ocaml, erlang), I still can't choose what kind of typing I prefer as far as static vs dynamic typing is concerned (I will not discuss the strong vs duck typing).<br/>
+I'm not convince that a static type system is a useful "bug avoidance system" (for my kind of development habits at least!). Not that it cannot prevent some bugs, but those are probably the "easy bugs" that would have show-up in unit-tests ... and this is exactly the point: unit-tests are anyway necessary to test the functional aspect, so type kind of bug will be found in either kind of development environment.<br/>
+Having written lot of code in python and C++, I sure better love python: I will not repeat here why language like python or ruby are more easy to read, more concise and so on ...<br/>
+However in team environment, a type is a first documentation feature! In a clear API, the type information is nearly enough to use the API (most python API documentation define all types of the parameters ...).<br/>
+Also with my last experiences with ocaml, I discover that having to define the type oblige to think more about <b>what</b> is the data. When thinking of the type of a data, you end-up asking you question like: what is it that I want to manipulate? if it should have this and that method, is it an application object? is it a subcomponent of my current object? is it a facet/interface of my object? can I abstract this "thing"? ... all that is a good point in favor of strongly typed language at compile time as it help to concentrate on defining data!

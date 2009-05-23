@@ -1,0 +1,12 @@
+---
+layout: post-import
+title: "String specific data-structure: set and map"
+categories: ['wp-import', 'ocaml']
+wpimport-url: "http://khigia.wordpress.com/2008/08/09/string-specific-data-structure-set-and-map/"
+---
+Lately I've been playing a bit ... well, that's a programmer kind of game: I wrote yet other implementations (with yet other bugs I assume) of some classic data-structures, in Ocaml.<br/>
+Those are all about string set or string map, and are purely functional (thus persistent).<br/>
+The code is in the project ocaml-stringset (<a href="http://github.com/khigia/ocaml-stringset/tree/master">http://github.com/khigia/ocaml-stringset/tree/master</a>). There is a TST (ternary search tree), a Collapsed TST, a Trie (<a href="http://www.amazon.com/Purely-Functional-Structures-Chris-Okasaki/dp/0521663504">bootstrap version of Chris Okasaki</a>) and maybe other will be added. Most of the code is in file/module StringSet so it is easy to embed in a project. There is one example file for each datastructure (as well as some unit test ... and the unit tests of TST iss pretty bad as it test the internal structure, not the API).<br/>
+Haven't been as far as doing stress tests though it would be nice to compare the different behaviours.<br/>
+<strong>Update:</strong> those algo are implemented for string, but we could certainly provide a generic implementation for any datatype that is iterable collection and whose items are comparable. I may try to make some generic version later on.<br/>
+<strong>Update:</strong> most of those tree algo implementation are NOT tail recursive; this would probably need continuations ... I'll add this if/when needed (in production environment, it should probably be done anyway except if the use case is restricted and ensure a limit in recursion depth).

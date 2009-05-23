@@ -1,0 +1,27 @@
+---
+layout: post-import
+title: "ocamerl ... no update :("
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2008/03/13/ocamerl-no-update/"
+---
+Quick news about ocamerl:
+<ul>
+	<li>I changed the build system to ocamlbuild (need ocaml 3.10).</li>
+	<li>... and that's all! can't find time to clean all the mess.</li>
+</ul>
+So anyway, here is the current state of ocamerl:
+<ul>
+	<li>ocaml can register a hidden erlang node (epmd).</li>
+	<li>ocaml node can respond to ping and keep connection up with erlang node (net_kernel process)</li>
+	<li>erlang can send (some) terms to named ocaml process</li>
+	<li>ocaml can send (some) terms to erlang process if it received the pid in a previous message</li>
+</ul>
+That's all for now! Argh!<br/>
+Amongst things I'd like to change:
+<ul>
+	<li>simplify terms manipulation in ocaml</li>
+	<li>add features (most important initial message from ocaml to erlang)</li>
+	<li>complete redesign of concurrency (using events or JoCaml maybe!)</li>
+	<li>add a minimum of documentation</li>
+</ul>
+I need motivation! In fact I have no project which would need ocaml + erlang ... for now.

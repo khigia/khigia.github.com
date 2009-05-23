@@ -1,0 +1,35 @@
+---
+layout: post-import
+title: "Advises on delicious tags"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/07/21/advises-on-delicious-tags/"
+---
+Because CF need data to learn, small examples to illustrate <a href="http://code.google.com/p/adviserl/">adviserl</a> are not easy to find. And thus the first "real" example is already a mis-use of adviserl: it uses the CF algorithm as an IR tool!<br/>
+Anyway, here we go, I created a tag recommender with my delicious bookmarks (this is not new, delicious already display related tags, but this is just an application example toy).<br/>
+This is done by considering each bookmark as a source (a user) and each tag as an item: each time a tag is associated with a bookmark, this is translated as "the bookmark rate the tag with a score of 1". The complete code is this:
+<code>application:start(adviserl),</code>
+<code>{ok, DeliciousPID} = deli_posts:start_link(),</code>
+<code>gen_server:call(DeliciousPID, {login, User, Password}),</code>
+<code>{ok, Posts, _Status} = gen_server:call(DeliciousPID, {get_posts, User, Options}, infinity),</code>
+<code>io:format("Loading posts", []),</code>
+<code>lists:foreach(</code>
+<code>  fun(#delipost{href=HRef,tags=Tags}) -&gt;</code>
+<code>  io:format(".", []),</code>
+<code>  lists:foreach(</code>
+<code>  fun(Tag) -&gt; adviserl:rate(HRef,Tag,{1,no_data}) end,</code>
+<code>  Tags</code>
+<code>  )</code>
+<code>  end,</code>
+<code>  Posts</code>
+<code>),</code>
+<code>io:format("~n", []).</code>
+Getting a recommendation for few keywords is then:
+<code>Keywords = ["erlang", "concurrency"],
+KeywordIDs = lists:map(fun(K) -&gt; adv_items:id_from_key(K) end, Keywords),
+Ratings = lists:map(fun(ID) -&gt; {ID, 1} end, IDs),
+Rec0 = adviserl:recommend_all(Ratings),
+lists:map(fun({ID,_}) -&gt; {ok,K} = adv_items:key_from_id(ID), K end, Rec0).</code>
+(lot of this code is about format and conversion, hopefully it will be done in next API release).<br/>
+This delicious example toy can be run by keywords.sh in <a href="http://adviserl.googlecode.com/svn/trunk/lib/adviserl/examples/delicious/">delicious example folder</a>.<br/>
+Yeah, I know, we can do the same more easily with few statistics (and <a href="http://www.r-project.org/">R</a>) and no CF ... but (1) I needed a small example and (2) this could be extended to use different user accounts.<br/>
+Hey! I should try to use <a href="http://www.citeulike.org/">citeUlike</a> instead of delicious for the next example!

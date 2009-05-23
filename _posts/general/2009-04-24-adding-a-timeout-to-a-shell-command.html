@@ -1,0 +1,9 @@
+---
+layout: post-import
+title: "Adding a timeout to a shell command"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2009/04/24/adding-a-timeout-to-a-shell-command/"
+---
+Quite a few times one or the other of my automation shell scripts got hang while running some external command (e.g. a remote shell command may hang if network is in weird state). For those cases where a stopped automation script could really hurt the system, I ended up writing a script wrapper that add a timeout to any command.<br/>
+This is kind of heavy weight implementation: instead of running the command directly, this start a first process sleeping for the duration of the timeout, and execute the command in a background process, and finally return the result of the first finishing process! 3 processes: 1 working, 1 sleeping, 1 waiting ... but it helped me few times!<br/>
+<script src="http://gist.github.com/101192.js"></script>

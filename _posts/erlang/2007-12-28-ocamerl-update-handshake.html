@@ -1,0 +1,16 @@
+---
+layout: post-import
+title: "ocamerl update: handshake"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/12/28/ocamerl-update-handshake/"
+---
+Code in ocamerl (part of erlocaml) pass the node handshake.  Hopefully nobody will read this code before I clean it up a bit ... because right now it is a furious mess!!!<br/>
+I spent some time (arg, that's a lot in fact) on a stupid (as the bug's author) bug. The (simplified) handshake is a follow:
+<ul>
+	<li>the 2 nodes exchange a challenge which is 4 random bytes interpreted as a Int32;</li>
+	<li>each node computes the MD5 of (their own cookie + challenge);</li>
+	<li>each node compares its result with the digest of the other node.</li>
+</ul>
+My bug was to concatenate the cookie (string) with the raw 4 bytes of the challenge ... where I had to concatenate the cookie with the string representation of the 32 bits long unsigned integer!<br/>
+(in fact the handshake is done with 2 challenges: each node send a challenge to the other)<br/>
+Anyway, the handshake pass correctly now, and ocaml node can receive the ping control message ... but do not reply yet! after it reply, sure I clean the code!!!

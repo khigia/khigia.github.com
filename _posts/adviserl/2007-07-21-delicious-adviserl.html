@@ -1,0 +1,25 @@
+---
+layout: post-import
+title: "delicious adviserl"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/07/21/delicious-adviserl/"
+---
+I (began to) wrote a <a href="http://del.icio.us/">delicious</a> API to implement a toy example for <a href="http://code.google.com/p/adviserl/">adviserl</a> (thus the <a href="http://adviserl.googlecode.com/svn/trunk/lib/adviserl/examples/delicious/">code is here</a>). More about the toy example in next blog post.<br/>
+Haven't found anywhere a delicious API library for Erlang ... but haven't really look for it because I wanted to avoid dependency. So I wrote one, organised in 2 parts.
+<ul>
+	<li> The first part (<code>deli_api</code>) is able to:
+<ul>
+	<li> connect to the delicious server and retrieve data (posts) using inets http client;</li>
+	<li> convert those data (posts) in Erlang terms using xmerl (discard XML as different delicious API (rss, api, ...) have different format of the same data);</li>
+</ul>
+</li>
+	<li> The second part is a gen_server (<code>deli_posts</code>) which accept those requests:
+<ul>
+	<li> <code>{login, User, Password}</code>, return <code>ok</code></li>
+	<li> <code>logout</code>, return <code>ok</code></li>
+	<li> <code>{get_posts, User, [Option]}</code> with <code>Option=no_update</code>, return <code>{ok, [Post], archive|uptodate}</code></li>
+</ul>
+</li>
+</ul>
+The server will maintain a local cache (a DETS file) and download from delicious server only if needed and requested. The login is only used to retrieve data from delicious server: data put in cache can always be accessed without password.<br/>
+I may like to use this API in order to write a plugin for <a href="http://sharedcopy.com/">SharedCopy</a>: any shared URL could be automatically posted in delicious (seems easy with <a href="http://yaws.hyber.org/">Yaws</a> but I need a web hosting for that).

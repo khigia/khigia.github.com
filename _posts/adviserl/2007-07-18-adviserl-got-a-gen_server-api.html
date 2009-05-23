@@ -1,0 +1,25 @@
+---
+layout: post-import
+title: "adviserl got a gen_server API"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/07/18/adviserl-got-a-gen_server-api/"
+---
+Until now, to access a remote node running <a href="http://code.google.com/p/adviserl">adviserl,</a> you could use the native Erlang RPC:
+<code>erlang&gt; rpc:call(adviserl_node@localhost, adviserl, rate, [1, 2, {3,nodata}]).</code><br/>
+I added a gen_server API to do exactly the same thing:
+<code>erlang&gt; gen_server:call({adv_api, adviserl_node@localhost}, {rate, 1, 2, {3,nodata}}).</code><br/>
+This is not simpler, but not more complicated either, and hopefully this will be more flexible when coming to distribution (the API may then become a global process).<br/>
+I also added a bunch of shell script to start, stop, rate, or run prediction from command line. The start-stop script (adv.sh) is quite usefull, while the others are convenient when debugging. Those scripts have yet to be documented :( but are more or less straightforward and have a minimum  help message when bad options or bad arguments are given.
+<code>shell&gt; ./bin/adv.sh start
+shell&gt; ./bin/adv-rate.sh 1 2 2 # user 1 rate item 2 with score 2
+shell&gt; ./bin/adv-rate.sh 1 3 3 # ...
+shell&gt; ./bin/adv-rate.sh 2 3 3
+shell&gt; ./bin/adv-rate.sh 2 4 4
+shell&gt; ./bin/adv-rate.sh 3 3 3
+shell&gt; ./bin/adv-getratings.sh 1
+3 3
+2 2
+shell&gt; ./bin/adv-recommendall-source.sh 3 # prediction for user 3
+4 4.00000
+2 2.00000</code><br/>
+I think my next post on adviserl will show a more useful example! :)

@@ -1,0 +1,19 @@
+---
+layout: post-import
+title: "mnesia enter in the playground"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/08/23/mnesia-enter-in-the-playground/"
+---
+adviserl is now version 0.2 thanks to its new default backend: Mnesia.<br/>
+<strong>Mnesia</strong><br/>
+All 4 data services (sources, items, ratings and predictions) can now store everything into Mnesia tables, which help to (let's hope ...) ensure consistency. Using Mnesia will also ease to distribute the application later.<br/>
+The main difficulty was the backup of adviserl data because all services are independent. So adviserl only provides tools (<code>adv_mnesia:backup/0</code>, <code>adv_util:save_files/0</code>) and the user of adviserl need to know want he want to backup and when (no logic is implemented to backup or restore data). There is no function to restore a backup when adviserl is running, but for a shortcoming, it is easy to stop and restart adviserl.<br/>
+For now, adviserl start mnesia if needed, but cannot stop mnesia when adviserl stop. Still wondering if mnesia could/should be an included application (using <code>mnesia_sup</code> module).<br/>
+<strong>API changes
+</strong><br/>
+The main interface has change a little bit to facilitate the use of ID or key to identify items and sources. By default, 'keys' are used to identify sources and items (<code>adviserl:rate/3,4</code>). New functions enable to directly use ID (<code>adviserl:rate_id/3,4</code>).<br/>
+Also new functions enable to add rating asynchronously (<code>adviserl:async_rate/3,4</code> and <code>adviserl:async_rate_id/3,4</code>), meaning that recommendation will not use those ratings until specified (<code>adv_predictions:init/0</code>): this enable to quickly add a lot of ratings (without expensive update of recommendation data), then purposely trigger a re-initialization of recommendation data.<br/>
+<strong>Conclusion</strong><br/>
+That's all for now.<br/>
+I hope I can work on using multiple prediction algorithms, but it may be better to first implement some regression tests and write a minimal documentation ;)<br/>
+I'm looking forward to play with recommender algorithms :)

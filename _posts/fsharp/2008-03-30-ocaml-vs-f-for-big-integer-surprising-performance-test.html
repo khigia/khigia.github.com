@@ -1,0 +1,46 @@
+---
+layout: post-import
+title: "ocaml vs. F# for big integer ... surprising performance test!"
+categories: ['wp-import', 'fsharp']
+wpimport-url: "http://khigia.wordpress.com/2008/03/30/ocaml-vs-f-for-big-integer-surprising-performance-test/"
+---
+Was inspired by <a href="http://strangelights.com/blog/archive/2008/03/25/1610.aspx">Rober Pickering post</a> about a post about Euler problem 14 ...<br/>
+Without changing the algorithm, I ran a simple test to compare F#, ocaml byte code and ocaml native code ... and the result is quite surprising, for me at least!<br/>
+The program do a lot of computation on integer (even 64 bits); I remember (no ref) that ocaml is more efficient for floating point operation that for integer. But anyway, just wanted an idea of how to port this code to Ocaml.<br/>
+Following is the code in F# as seen on cited post:<br/>
+<pre><code>
+#light
+let rec seq_length x n =
+    match x with
+    | x when x = 0L -> (n + 1)
+    | x when x = 1L -> seq_length 0L (n + 1)
+    | x when x%2L=0L ->seq_length (x/2L) (n + 1)
+    | _ -> seq_length (3L*x + 1L) (n + 1)
+let rec loop i imax n =
+  let n' = seq_length i 0
+  let imax, n = if n' > n then i, n' else imax, n
+  if i < 1000000L then loop (i + 1L) imax n else imax
+print_any (loop 1L 0L 0)</code></pre>
+And here is an Ocaml version:
+<pre><code>
+let ( ** ) = Int64.mul
+let ( // ) = Int64.div
+let ( %% ) = Int64.rem <br/>
+let rec seq_length x n =
+    match x with
+    | 0L -> (n + 1)
+    | 1L -> seq_length 0L (n + 1)
+    | x when x %% 2L = 0L -> seq_length (x // 2L) (n + 1)
+    | _ -> seq_length (Int64.succ (3L ** x)) (n + 1)<br/>
+let rec loop i imax n =
+  let n' = seq_length i 0 in
+  let imax, n = if n' > n then (i, n') else (imax, n) in
+  if i < 1000000L then loop (Int64.succ i) imax n else imax
+let _ = print_string (Int64.to_string (loop 1L 0L 0))</code></pre>
+Surprisingly (for me!), the compiled F# code is much faster:
+<ul>
+	<li>time mono eul14.exe: 12.979s</li>
+	<li>time ./eul14.byte: 58.145s</li>
+	<li>time ./eul14.native: 30.234s</li>
+</ul>
+I'm not sure why Ocaml seems to be slower for this test. Can it be a GC issue?

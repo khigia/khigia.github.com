@@ -1,0 +1,16 @@
+---
+layout: post-import
+title: "Generate all pair permutations in (not really) random order (and space efficiently)"
+categories: ['wp-import', 'ocaml']
+wpimport-url: "http://khigia.wordpress.com/2008/08/07/generate-all-pair-permutations-in-not-really-random-order-and-space-efficiently/"
+---
+<em>(that time I learnt the lesson: never promise what the next post will be about coz I often not deliver)</em><br/>
+Optimization algo need to explore the space of solutions, and this exploration is a major part of the algo! Let's focus on one simple case: exploring in random order two finite dimensions. For example, let two integer variables, V1 taking value in interval [1, 100] and V2 taking value in interval [1, 20]: how to explore all the possible pairs (v1,v2) in random order?<br/>
+A simple (almost-)solution is given by the following python code:<br/>
+<pre><code>
+[(e1,e2) for e1 in shuffle(range([1,100)), for e2 in shuffle(range(1,20))]
+</code></pre>
+which is in fact the cartesian product of the shuffles of V1 and V2 intervals ... but this is ordered by values of the first shuffle and thus not random.<br/>
+OK, now is the bad news: I have no solution completely space efficient to propose. My best effort is a solution which compute at least two shuffles, one on each dimension (kind of O(n + m) for space) and is even not random ... just random enough for most of the cases :P<br/>
+So how? the solution is describe in this post <a href="http://weblog.raganwald.com/2007/02/haskell-ruby-and-infinity.html">http://weblog.raganwald.com/2007/02/haskell-ruby-and-infinity.html</a> and especialy the section about the tabular view of the cartesian product. Did you read it? so the proposed solution is to navigate the cross-product table along its diagonal instead of row by row ... simply smart isn't it? It give "impression" of randomness :P<br/>
+Ocaml code for this algo is here: <a href="http://github.com/khigia/ocaml-anneal/tree/master/walks.ml">http://github.com/khigia/ocaml-anneal/tree/master/walks.ml</a> (function <span class="n">pair_permutation_random_seq); </span>It uses extensively an ad-hoc stream implementation (Seq module) to perform the walk lazyly. It was a good example to test the stream implementation!

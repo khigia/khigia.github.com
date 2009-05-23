@@ -1,0 +1,31 @@
+---
+layout: post-import
+title: "me me Euler Pb1: looking at the data (and fun with python)"
+categories: ['wp-import', 'python']
+wpimport-url: "http://khigia.wordpress.com/2008/04/25/me-me-euler-pb1-looking-at-the-data-and-fun-with-python/"
+---
+Google for it, Euler problem #1 has got a lot of solution implementations. Most of them use similar algo: produce the list of all numbers in the range [0-1000], filter only number divisible by 3 or 5, and compute the sum. This is perfectly fine, and it's wonderfull to code when your language allow some kind of lazy list (default in Haskell, or often called stream library in other language).<br/>
+But can we construct the sequence of "number divisible by 3 and 5" directly?<br/>
+Let's have a look at what this sequence looks like:<br/>
+<pre><code>
+m = 42
+l = sorted(list(set(range(0, m, 3) + range(0, m, 5))))
+l
+[0, 3, 5, 6, 9, 10, 12, 15, 18, 20, 21, 24, 25, 27, 30, 33, 35, 36, 39, 40]
+</code></pre>
+Well ... cannot see a pattern ... let's look at the sequence of difference between 2 consecutive numbers:<br/>
+<pre><code>
+map(lambda (x,y): y-x, zip(l, l[1:]))
+[3, 2, 1, 3, 1, 2, 3, 3, 2, 1, 3, 1, 2, 3, 3, 2, 1, 3, 1]
+</code></pre>
+Here we go ... I have no idea why, but seems that we can construct the sequence using the list of increment 3,2,1,3,1,2,3 (same with m=300).<br/>
+And then, here come a different python solution:<br/>
+<pre><code>
+from itertools import cycle, takewhile
+def succ(b, inc):
+  while True:
+    b += inc.next()
+    yield b
+sum(takewhile(lambda x: x < 1000, succ(0, cycle([3,2,1,3,1,2,3]))))
+</code></pre><br/>
+By the way, there must be a mathematical solution to this first problem, some kind of magic formula ... any pointer?

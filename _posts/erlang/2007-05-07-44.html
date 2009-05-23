@@ -1,0 +1,91 @@
+---
+layout: post-import
+title: "Simple stream implementation in Erlang"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/05/07/44/"
+---
+My projects are all suspended ... I have been busy playing with <a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-24.html#%_sec_3.5">stream examples of chapter 3 of SICP</a> :).<br/>
+I wrote in Erlang a simple implementation of stream as cons-list. It is not meant to be efficient but easy to understand (and debug):
+<ul>
+	<li>a stream is here a tuple <span style="font-family:courier new,monospace;">{stream, Head, DelayedTail}</span>, where <span style="font-family:courier new,monospace;">DelayedTail</span> is a 0-arity's function which return the next stream element tuple;</li>
+	<li>a macro implements the delay function used to construct a stream tail:
+<span style="font-family:courier new,monospace;">-define(DELAY(Any), fun() -&gt; Any end)</span>.</li>
+</ul>
+Note: the head is not delayed, and if we need a delayed head this probably means that we need a lazy-evaluation model, to which I'll come later. Using abstract functions, <span style="font-family:courier new,monospace;">head/1</span> to access current value and <span style="font-family:courier new,monospace;">tail/1</span> to force evaluation of next stream state, will enables to hook a memoization process if needed.
+<p style="text-align:center;">&nbsp;</p>
+<p style="text-align:left;">Anyway, the stream concatenation and the delay's macro are enough to build all stream manipulations. Here are some examples:</p><br/>
+<pre>
+% map: application of a procedure to all elements of a stream
+map(Proc, Stream={stream, undefined, undefined}) -&gt;
+    % empty stream: do nothing
+    Stream;
+map(Proc, Stream) -&gt;
+    % apply Proc to current, and delay apply to all tail elements
+    {stream, Proc(head(Stream)), ?DELAY(map(Proc, tail(Stream)))}<br/>
+% filter elements of stream with respect to some predicate
+filter(Pred, Stream={stream, undefined, undefined}) -&gt;
+    % empty stream: do nothing
+    Stream;
+filter(Pred, Stream={stream, _Head, _Tail}) -&gt;
+    Current = head(Stream),
+    case Pred(Current) of
+        true -&gt;
+            {stream, Current, ?DELAY(filter(Pred, tail(Stream)))};
+        _False -&gt;
+            filter(Pred, tail(Stream))
+    end.<br/>
+% generalized map: apply proc to multiple streams (traverse streams "in parallel")
+gmap(Proc, Streams=[First={stream, undefined,undefined}|_Others]) -&gt;
+    % assume all stream have the same length
+    % found one stream empty: end of process
+    First;
+gmap(Proc, Streams=[First|_Others]) -&gt;
+    % create a list of heads
+    Heads = lists:map(fun(S) -&gt; stream:head(S) end, Streams),
+    % create a generator of the list of tails
+    FTails = fun() -&gt; lists:map(fun(S) -&gt; stream:tail(S) end, Streams) end,
+    % result is the application to heads and delayed mapping to tails
+    {stream, Proc(Heads), ?DELAY(gmap(Proc, FTails()))}.<br/>
+</pre>
+And now, we have enough to use the streams:
+<pre>
+% explicit definition of infinite sequence of integers
+explicit_integers_from(N) -&gt;
+    {stream, N, ?DELAY(explicit_integers_from(N+1))}.<br/>
+% add values of 2 streams
+add(S1, S2) -&gt;
+    gmap(fun([X,Y]) -&gt; X + Y end, [S1, S2]).<br/>
+% infinite sequence of Fibonacci numbers
+fibs() -&gt;
+    {stream, 0, ?DELAY({stream, 1, ?DELAY(add(fibs(), tail(fibs())))}) }.<br/>
+</pre>
+A bit more usefull: 2 infinite sequences of prime numbers. First one uses the sieve of Eratosthene; second one uses basic definition of prime: number not divisible by any previous primes.
+<pre>
+% Sieve of Eratosthene:<br/>
+sieve(Stream) -&gt;
+    Current = head(Stream),
+    {stream, Current, ?DELAY(sieve(filter(
+        fun(N) -&gt; N rem Current /= 0 end,
+        tail(Stream)
+    )))}.<br/>
+sieve_primes() -&gt;
+    sieve(explicit_integers_from(2)).<br/>
+% prime numbers using the factors decomposition property<br/>
+primes() -&gt;
+    {stream, 2, ?DELAY(filter(fun is_prime/1, explicit_integers_from(3)))}.<br/>
+is_prime(N) -&gt;
+    iter_is_prime(N, primes()).<br/>
+iter_is_prime(N, Primes) -&gt;
+    FirstPrime = head(Primes),
+    if
+        FirstPrime * FirstPrime &gt; N -&gt;
+            true;
+        N rem FirstPrime == 0 -&gt;
+            false;
+        true -&gt;
+            iter_is_prime(N, tail(Primes))
+    end.<br/>
+</pre>
+And of course there are lot of stream examples in SICP chapter, like the impressive Euler transformation to accelerate convergence of sequence.<br/>
+In this thread <a href="http://erlang.mirror.su.se/ml-archive/erlang-questions/200010/msg00165.html" target="_blank">http://erlang.mirror.su.se/ml-archive/erlang-questions/200010/msg00165.html </a> you can find a real stream implementation by Richard Carlsson, as well as interesting discussions about stream and lazy evaluation. Also check this other thread <a href="http://www.erlang.org/ml-archive/erlang-questions/200602/msg00003.html" target="_blank"> http://www.erlang.org/ml-archive/erlang-questions/200602/msg00003.html</a> if you're interested by memoization in Erlang. I may test it later to learn the magic of Erlang parse_transform ;), but I think an easy possible way to implement memoization for my stream is to model a stream as a tuple of 4 elements, adding a dictionary of memoized values as last element (my current implementation uses the process dictionary to store memoized values).<br/>
+Actually I'm not sure if this post is too short to be a tutorial or too long to be a interesting post! Anyway, it exists now ;) ... mostly because a friend gave me motivation to do so, thanks!

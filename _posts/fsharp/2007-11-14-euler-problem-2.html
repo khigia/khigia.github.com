@@ -1,0 +1,38 @@
+---
+layout: post-import
+title: "Euler problem 2"
+categories: ['wp-import', 'fsharp']
+wpimport-url: "http://khigia.wordpress.com/2007/11/14/euler-problem-2/"
+---
+This <a href="http://blogs.msdn.com/chrsmith/archive/2007/10/26/Project-Euler-in-F_2300_-_2D00_-Problem-2.aspx">blogpost</a> present a good F# solution to Euler problem 2. The code make use of infinite sequence. I've written other solutions to this same problem. The first one is a code specialized to solve this problem: it computes the fibonacci sequence while checking the problem conditions and computing the problem answer.
+<pre><code>
+#light
+let rec fib_filter_fold (n0,n1) filter folder acc m =
+    if n0 <= m
+    then fib_filter_fold (n1, n0 + n1) filter folder (if filter n0 then (folder acc n0) else acc) m
+    else acc
+let pb2 m = fib_filter_fold (1,1) (fun x -> x % 2 = 0) (fun acc x -> acc + x) 0 m
+printf "euler problem 2 (1000000): %a\n" output_any (pb2 1000000)</code></pre>
+I then wrote a second version, trying to make use of Seq functions. Idea is to start with the fibonacci sequence and apply some modification on it to solve the problem. I'm not so happy with the result!
+<pre><code>
+let fibs =
+    Seq.unfold
+        (fun (n0, n1) -> Some(n0, (n1, n0 + n1)))
+        (1, 1)
+let reach_index s m =
+    s
+    |> Seq.mapi (fun i x -> (i, x))
+    |> Seq.find_index (fun x -> x > m)
+let pb2seq n =
+    Seq.truncate (reach_index fibs n) fibs
+    |> Seq.filter (fun x -> x % 2 = 0)
+    |> Seq.fold (fun acc x -> acc + x) 0
+printf "euler problem with seq (1000000): %a\n" output_any (pb2seq 1000000)</code></pre>
+Why don't I like this? because I have to manipulate the sequence twice, first to find the index of the last element to take into account, and second to compute the problem answer.I would have like a method 'take_while' in Seq to write something in the line of:
+<pre><code>
+let pb2_not_compilable n =
+    fibs
+    |> Seq.take_while (fun x -> x < n)
+    |> Seq.filter (fun x -> x % 2 = 0)
+    |> Seq.fold (fun acc x -> acc + x) 0</code></pre>
+... am I missing something?Btw, how to implement this "take_while" function? I've try, but Seq has a 'hd' function but no 'tail' ... what am I missing here? I'm sure this is possible to implement ...
