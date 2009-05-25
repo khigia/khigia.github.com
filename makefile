@@ -7,7 +7,7 @@ build:
 
 deploy:
 	rsync \
-	  -avz \
+	  -avzP \
 	  --rsh=ssh \
 	  --rsync-path=/srv/d_khi/local/bin/rsync \
 	  _site/ \
