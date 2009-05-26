@@ -5,7 +5,7 @@ layout: nil
 <feed xmlns="http://www.w3.org/2005/Atom">
  
  <title>khigia</title>
- <link href="/atom.xml" rel="self"/>
+ <link href="http://blog.khigia.net/atom.xml" rel="self"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
  <id></id>
  <author>
@@ -16,7 +16,7 @@ layout: nil
  {% for post in site.posts %}
  <entry>
    <title>{{ post.title }}</title>
-   <link href="{{ post.url }}"/>
+   <link href="http://blog.khigia.net/{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
    <id>{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
