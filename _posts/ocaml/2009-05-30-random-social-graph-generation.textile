@@ -9,19 +9,36 @@ I wrote a tool to generate some random graph. The goal is to render graph that h
 
 The code is "online":http://github.com/khigia/socnet/tree. All is in single file _socnet.ml_, but I use code from _xmlrpc-light_ library for Ubigraph calls. There is a _Builder_ module to augment the default builder of _ocamlgraph_ with a state; a special UbigraphBuilder to replicate the graph structure for rendering; and finally the algo to generate the graph is in Gen module.
 
+The result is a single binary:
+<pre><code>
+./socnet.byte
+  [-n <node-number>]
+  [-gv] [-ubi]
+  [-fwd <forward-factor>] [-bck <backward-factor>] [-bi <linking-back-factor>]
+</code></pre>
+When creating an edge from a source node to some target node:
+* forward factor is related to the probability to link source node to successors of a target node
+* backward factor is related to the probability to link source node to predecessors of a target node
+* linking back factor is related to probability to create an edge from target node to source node
+
 Following are some screenshots of results, although it is much more interesting to watch the construction steps though Ubigraph renderer.
 
 <pre><code>
-./socnet.byte -n 12 -gv
-</pre></code>
+./socnet.byte -n 12 -bi 0.0 -gv
+</code></pre>
 !{width:16cm}/images/rnd-graph-gv-12.jpg!
 
 <pre><code>
-./socnet.byte -n 32 -ubi
-</pre></code>
-!{width:16cm}/images/rnd-graph-ubi-32.jpg!
+./socnet.byte -n 12 -gv
+</code></pre>
+!{width:16cm}/images/rnd-graph-gv-12-bi.jpg!
+
+<pre><code>
+./socnet.byte -n 800 -bi 0.0 -ubi
+</code></pre>
+!{width:16cm}/images/rnd-graph-ubi-800.jpg!
 
 <pre><code>
 ./socnet.byte -n 800 -ubi
-</pre></code>
-!{width:16cm}/images/rnd-graph-ubi-800.jpg!
+</code></pre>
+!{width:16cm}/images/rnd-graph-ubi-800-bi.jpg!
