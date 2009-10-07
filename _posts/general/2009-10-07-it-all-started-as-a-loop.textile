@@ -1,0 +1,42 @@
+---
+layout: post
+title: "It all started as a loop in bash"
+categories: ['bash']
+---
+
+Once upon a time (and quite a few other times), I needed to start a process and watch it's status to restart it in case of crash (yeah, this kind of things still happens).
+
+It all start with a simple bash script:
+
+bc. until $CMD
+do
+  echo "crashed! restart in 1 second"
+  sleep 1
+done
+
+And then I needed to send alert in case of crash, to stop the process on request and to query the status.  At this point, I should have moved away from bash ... but I didn't. Worst than that, I stole idea on the web to add an HTTP API ... in bash, yes. Why not monit? not even half the fun!
+
+So now there is this big script, with the wonderfull name of "runloop.sh", <a href="http://github.com/khigia/bashful/blob/master/runloop.sh">hosted on github</a>.
+
+Following are use examples.
+
+* start
+Start the command line and monitor the process from another background process. The "myAppID" is a simple identifier of the instance of the running program. This create files to log the pid of the app, of the monitor, and also one file with monitor logs. If myapp crash or stop with exit code different from 0, it is restarted.
+
+bc. shell> ./runloop.sh start myAppID /usr/local/myapp/bin/myapp --be-nice
+
+* status
+This print a message "running" or not, and exit with code 0 if running.
+
+bc. shell> ./runloop.sh status myAppID
+
+* stop
+Send the kill signal to process identified by myAppID.
+
+bc. shell> ./runloop.sh stop myAppID
+
+* HTTP:
+Direct browser to http://localhost:9000/myAppID to get status or to stop myAppID.
+
+bc. shell> ./runloop.sh http
+
