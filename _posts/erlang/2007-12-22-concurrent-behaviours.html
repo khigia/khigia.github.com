@@ -1,0 +1,10 @@
+---
+layout: post-import
+title: "Concurrent behaviours"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/12/22/concurrent-behaviours/"
+---
+As spotted in this <a href="http://gilesbowkett.blogspot.com/2007/12/erlang-robotics.html">blog post</a> using Erlang in robotics seems a pretty good idea to implement robust systems and concurrent behaviours.<br/>
+However I do not consider the subsumption architecture (Brooks, 1986) as the best example of action selection architecture for concurrent behaviours. As far as I remember, the subsumption architecture assumes predefined priorities on behaviours (hierarchy), and has a fix set of rules on how some behaviours can subsume others.<br/>
+As far as reactive architectures are concerned, IMHO Erlang style of concurrency could be more effectively used on architecture using activation networks (Maes, 1989), or a voting mechanism <i>a la</i> DAMN (Rosenblatt, 1995), or a pertinence-based selection like Creature (Blumberg, 1997), or whatever architecture which enable a distribution of control.<br/>
+But yes, Erlang seems quite a good match to implement autonomous entities (robots or software agents (MAS)).

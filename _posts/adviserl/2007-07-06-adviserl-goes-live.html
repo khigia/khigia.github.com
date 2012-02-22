@@ -1,0 +1,46 @@
+---
+layout: post-import
+title: "Adviserl goes live"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/07/06/adviserl-goes-live/"
+---
+Long time ago I wrote a very simple <a href="http://www.daniel-lemire.com/fr/abstracts/SDM2005.html">Slope-One</a> implementation (collaborative filtering algorithm): this was easy and fulfilled all my needs ... which was then to learn CF and Erlang ;).<br/>
+Then I realized that it could be more than fun and could even become useful as a simple recommender system. So I wrote it as an OTP application and it is <a href="http://code.google.com/p/adviserl/">published</a> under GPLv3 license. Lots (lots!) of things still have to be done but the basic are like that:
+<pre>% start application: by default use Slope-One data/algorithm
+application:start(sasl),
+application:start(adviserl),</pre>
+<pre>% add some rating in the system
+adviserl:rate(1, 2,  {3, no_rating_data}), % user 1 rate item 2 with value 3 (no data)
+adviserl:rate(1, 4,  {5, no_rating_data}), % ...
+adviserl:rate(2, 2,  {1, no_rating_data}),
+adviserl:rate(2, 5,  {8, "damn good!"}), % any data term can be associated to rating value
+adviserl:rate(3, 4,  {3, no_rating_data}),
+adviserl:rate(3, 5,  {2, no_rating_data}),
+adviserl:rate(3, 12, {2, no_rating_data}),</pre>
+<pre>% some debug output to "see" the data
+adv_ratings:print_debug(), % display the ratings per user
+adv_items:print_debug(), % display a covisitation matrix</pre>
+<pre>% try some predictions
+adviserl:recommend_all(1), % prediction for user 1
+adviserl:recommend_all(2), % ... for user 2
+adviserl:recommend_all(3),
+adviserl:recommend_all(4),
+adviserl:recommend_all([]), % for any user without rating!
+adviserl:recommend_all([{2,5}]), % for any user having those ratings
+adviserl:recommend_all([{4,5}]), % idem
+adviserl:recommend_all([{2,5},{4,5}]), % idem with multiple ratings
+adviserl:recommend_all([{3,5}]), % ... even if item is unknown</pre>
+<pre>% update on the fly
+IncreaseRating = fun({R, Data}) -&gt; {R + 1, Data} end,
+DefaultRating = {1, no_data},
+adviserl:rate(1, 2, {7, now()}), % user 1 change rating of item 2 from 3 to 7, adding data
+adviserl:rate(1, 2, IncreaseRating, DefaultRating), % update from 7 to 8 with function
+adviserl:rate(1, 42, IncreaseRating, DefaultRating), % rate item 42 at 1 (default)</pre>
+<pre>ok_lah.</pre>
+Among the main points on the <a href="http://code.google.com/p/adviserl/wiki/Roadmap">pseudo roadmap</a>:
+<ul>
+	<li> API to call adviserl functions through process messages</li>
+	<li>data persistence</li>
+	<li> data distribution</li>
+	<li>algorithm distribution</li>
+</ul>

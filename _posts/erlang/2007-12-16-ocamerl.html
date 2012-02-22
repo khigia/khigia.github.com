@@ -1,0 +1,25 @@
+---
+layout: post-import
+title: "ocamerl"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/12/16/ocamerl/"
+---
+ Christmas is coming, and I found a new toy to play with: ocamerl. This is a very simple solution to exchange data between erlang and ocaml. In fact, this is mainly an ocaml implementation of the erlang external binary format (based on <a href="http://groups.google.com/group/erlocaml-discuss/browse_thread/thread/920bc75a60a3e2e5">this discussion/code</a>). I just added few tools to make a TCP connection to exchange those data.<br/>
+On erlang side, I use 2 processes: the receiver process listen on a TCP port,read data and send it back to any erlang process meant to handle incoming data; the second process is busy transfering all data in its message queue to some TCP server (the ocaml part). On ocaml side, there are a couple a function to transform erlang forms in ocaml entities and vice versa.<br/>
+I only wrote a very very simple exemple: an ocaml echo server, which multiply by 2 all integers sent in message (deep search in tuple).<br/>
+Erlang side init:<br/>
+<pre><code>
+1>Receiver = spawn(oe, print_mailbox, []).
+2>Sender = oe:messenger(12345, 54321, Receiver).</code></pre>
+Ocaml side init:
+<pre><code>
+./ex/double -recv 12345 -send 54321</code></pre>
+Then, any term sent to from erlang is sent back by ocaml.
+<pre><code>
+3> Sender ! {true, 12, {1,2}}.
+{true,12,{1,2}}
+Sending data: <<131,104,3,100,0,4,116,114,117,101,97,12,104,2,97,1,97,2>>
+Received binary: <<131,104,3,100,0,4,116,114,117,101,97,24,104,2,97,2,97,4>>
+Converted to term: {true,24,{2,4}}
+Received: {true,24,{2,4}}</code></pre>
+Funny, isn't it ? :) This is an early stage of course. Code is part of <a href="http://code.google.com/p/erlocaml">erlocaml project</a> (in lib/ocamerl). My goal is to write a hidden erlang node in ocaml. Not sure it is useful, but quite certain it is interesting ;)

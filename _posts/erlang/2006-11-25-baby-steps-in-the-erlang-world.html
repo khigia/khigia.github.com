@@ -1,0 +1,64 @@
+---
+layout: post-import
+title: "Baby steps in the Erlang world!"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2006/11/25/baby-steps-in-the-erlang-world/"
+---
+It took a long time to decide <a href="http://khigia.wordpress.com/2006/11/02/what-is-my-next-programming-language/" title="to learn Erlang instead of Haskell or OCaml/F#">to learn Erlang instead of Haskell or OCaml/F#</a>. What I really want to learn for now are the OTP principles of distributed application. So I wrote my first Erlang script (not yet an application) and it confirmed my point of view: Erlang make easy the development of distributed program! really!!!<br/>
+At my work we needed to test performance of a TCP server (and we'll used Grinder because most of our API is Python). I've decided to use Erlang to do the same thing as an exercise: grind.erl (of course it will never become neither as huge as <a href="http://grinder.sourceforge.net/" title="Grinder">Grinder</a> neither as efficient as <a href="http://tsung.erlang-projects.org/" title="Tsung">Tsung</a>; I even do not hope it can be usefull). But with few lines of code, I was able to reproduce the same behavior as Grinder: launch on multiple machine multiple tester agents executing some test function and gather the results of all the tests.<br/>
+Ok, I did not told all the truth: that's not a very small number of lines: arround 260 (with tests and all). But all the code is for running multiple time a test function and gathering some statistics on its result (run_task). Distributed this behaviour among multiple Erlang node is only a map call (distribute_task)!<br/>
+Here is a code extract:
+<pre>
+distribute_task(NodeLst, Task) -&gt;
+    NodeLstLen = length(NodeLst),
+    StatListener = spawn(grind, statistic_gathering, [now(), NodeLstLen]),
+    io:format(
+        "~w create statistic gathering process ~w on node ~w~n",
+        [self(), StatListener, node()]
+    ),
+    TaskRunnerCreator = fun(Node) -&gt; spawn(
+        Node,
+        grind,
+        run_task,
+        [StatListener, Task]
+    ) end,
+    Runners = lists:map(TaskRunnerCreator, NodeLst),
+    io:format(
+        "~w create a list of task runners: ~w~n",
+        [self(), Runners]
+    ),
+    Runners.</pre>
+And here is a usage example:
+<pre>
+grind:init([node(), grinderl@node.net]).
+grind:distribute_task(
+        [node(), grinderl@node.net], % use 2 nodes
+        {
+            % on each node run the test function in 50 concurrent process
+            {concurrent, 50},
+            % two statistics to gather
+            [{mean, writetime}, % a real value (mean, std. dev., min, max, med will be retrieved
+             {count, writer_val} % a occurence counter
+            ],
+            % foo function to test: must return a tuple {ok|error, Pid, ValLst}
+            fun(Writer, WritenValue) -&gt;
+                FWrite = fun() -&gt; io:format("~s got ~w~n", [Writer, WritenValue]) end,
+                {WriteTime, _Res} = timeit(FWrite),
+                {ok, self(), [WriteTime, {Writer, WritenValue}]}
+            end,
+            % arguments to used for each call of the test function
+            [{rr, ["bea", "pouf"]}, % first is taken in the list with a round-robin style
+             {choice, [0, 1, 12, 42, 77]} % second argument is randomly choosen from the list
+            ]
+        }
+    )</pre>
+This first steps was to become more familiar with Erlang language. My next steps will be:
+<ul>
+	<li>     use edoc ...</li>
+	<li>     use logger/trace services instead of printing every function call</li>
+	<li>     use generic services (gen_event, gen_server)</li>
+	<li>     create an OTP application (application, supervisor)</li>
+	<li>     use Mnesia to gather statistics</li>
+	<li>       what about OTP release</li>
+	<li>     embed everything in distribution package (automake/autoconf ?)</li>
+</ul>

@@ -1,0 +1,105 @@
+---
+layout: post-import
+title: "Morphing ruby to erlang just for fun"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/11/11/morphing-ruby-to-erlang-just-for-fun/"
+---
+<p>Read some introductions to theory of categories (a <a href="http://math.ucr.edu/home/baez/week73.html">very good introduction </a>to the theory, or this one <a href="http://reperiendi.wordpress.com/2007/11/03/category-theory-for-the-java-programmer">more programmer oriented</a>). As I also stumble upon <a href="http://groups.google.com/group/comp.lang.ruby/browse_thread/thread/1052c289b22c60a5">this thread</a>, I discover a new concept: "hylomorphism is a composite of an anamorphism (unfold) and an catamorphism  (fold/inject) <a href="http://tunes.org/wiki/Morphism">[1]</a>, <a href="http://www.cs.nott.ac.uk/~cvh/hylos/hylos.pdf">[2]</a>", along with a ruby code to implement it in some way (this the googlegroup thread above).</p>
+<p>Just for fun (and be sure to understand it), I translated the code in Erlang. I've used the property list module to implement some kind of default value, but it's not really elegant. Anyway, code is here.</p>
+<pre><code>
+-module(hylo).
+-export([
+    % hylomorphism API
+    new/1,
+    % examples/toys
+    evens/1,
+    fact/1,
+    to_bin/1,
+    expand/1
+]).
+% internal declarations
+-record(hylo, {
+    do,
+    till,
+    collecting,
+    injecting
+}).
+% API
+new(PL) when is_list(PL) -&gt;
+    H = #hylo{
+        do = proplists:get_value(
+            do,
+            PL,
+            fun(X) -&gt; X + 1 end
+        ),
+        till = proplists:get_value(
+            till,
+            PL,
+            fun(X) -&gt; X =:= undefined end
+        ),
+        collecting = proplists:get_value(
+            collecting,
+            PL,
+            fun(X) -&gt; X end
+        ),
+        injecting = proplists:get_value(
+            injecting,
+            PL,
+            {   [],
+                fun(A,E) -&gt; [E|A] end,
+                fun lists:reverse/1
+            }
+        )
+    },
+    fun(S) -&gt; eval(H, S, element(1,H#hylo.injecting)) end.
+% internal implementation
+eval(H, S1, R) -&gt;
+    {_, InjF, InjR} = H#hylo.injecting,
+    case (H#hylo.till)(S1) of
+        false -&gt;
+            V = (H#hylo.collecting)(S1),
+            S2 = (H#hylo.do)(S1),
+            eval(H, S2, InjF(R, V));
+        _ -&gt;
+            InjR(R)
+    end.
+% examples
+evens(N) -&gt;
+    H = new([
+        {do, fun(X) -&gt; X + 2 end},
+        {till, fun(X) -&gt; X &gt;= N end}
+    ]),
+    H(0).
+fact(N) when N &gt; 0 -&gt;
+    H = new([
+        {do, fun(X) -&gt; X - 1 end},
+        {till, fun(X) -&gt; X =&lt; 1 end},
+        {injecting, {1, fun(A,E) -&gt; A * E end, fun(A) -&gt; A end}}
+    ]),
+    H(N).
+to_bin(N) when N &gt; 0 -&gt;
+    H = new([
+        {do, fun(X) -&gt; X div 2 end},
+        {till, fun(X) -&gt; X =&lt; 0 end},
+        {collecting, fun(X) -&gt; (X rem 2) end},
+        {injecting, {[], fun(A,E) -&gt; [E|A] end, fun(A) -&gt; A end}}
+    ]),
+    H(N).
+expand(L) -&gt;
+    H = new([
+        {do, fun ([_|T]) -&gt; T; ([]) -&gt; [] end},
+        {till, fun ([]) -&gt; true; (_) -&gt; false end},
+        {collecting, fun([{C,N}|_]) -&gt; lists:duplicate(N, C) end}
+    ]),
+    H(L).
+-ifdef(EUNIT).
+-include_lib("eunit/include/eunit.hrl").
+evens_test() -&gt;
+    ?assert(evens(10) =:= [0,2,4,6,8]).
+fact_test() -&gt;
+    ?assert(fact(5) =:= 120).
+to_bin_test() -&gt;
+    ?assert(to_bin(10) =:= [1,0,1,0]).
+expand_test() -&gt;
+    ?assert(expand([{$a,2},{$b,3},{$c,4}]) =:= ["aa", "bbb", "cccc"]).
+-endif.</code></pre>

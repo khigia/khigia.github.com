@@ -1,0 +1,25 @@
+---
+layout: post-import
+title: "SG bus routes ... following"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2008/05/28/sg-bus-routes-following/"
+---
+This post is a following to the <a href="http://khigia.wordpress.com/2008/05/24/sg-bus-services-map/">previous post about drawing SG bus route</a> with google map API.
+<h3>Status of the system</h3>
+This is for now only a toy demo, all in a single javascript document that draw the map when loaded (the javascript file is generated from a KML file by a python program that also computes the bus service routes).
+<h3>Toward drawing all the bus services ...</h3>
+Drawing all the bus services on the same map not only is *very heavy* for the browser (at least for firefox, and its SVG renderer) but also give very little information (it is too much data at one time).<br/>
+See by yourself:
+<p style="text-align:center;"><a href="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-all_inner.jpg"><img class="alignnone size-medium wp-image-101 aligncenter" src="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-all_inner.jpg?w=300" alt="" width="300" height="152" /></a></p>
+Even zooming (on Dhoby Ghaut station):
+<p style="text-align:center;"><a href="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-all-zoom_inner.jpg"><img class="alignnone size-medium wp-image-102 aligncenter" src="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-all-zoom_inner.jpg?w=300" alt="" width="300" height="152" /></a></p><br/>
+<h3>What could be done ...</h3>
+<ul>
+	<li>To solve the problem of too many services displayed at same time, definitively a good UI could improve usability.
+What I have in mind is a kind of UI which enable to select which services to display ... but maybe something better can be done like auto-selection of services to display depending of zoom factor or user itinary?</li>
+	<li>The previous point could also help to not send all the data to the client (in order to save bandwith).</li>
+	<li>Automatic route simplification: on one route, when adjacent stops are "too close" to each other, we could remove one of them on the drawing (which would make it lighter, and also remove some artifact like tiny wigzag caused by stop on the opposite side of the road).</li>
+	<li>Adding some constraints manually (editing few distance between some stops) to correct some wrong path.</li>
+</ul>
+<h3>More?</h3>
+As in the previous post conclusions, I think a mashup of existing itinery service to display the itinery on a map could be quite interesting.

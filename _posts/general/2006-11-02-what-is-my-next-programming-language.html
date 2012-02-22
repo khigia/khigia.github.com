@@ -1,0 +1,33 @@
+---
+layout: post-import
+title: "My next programming language"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2006/11/02/what-is-my-next-programming-language/"
+---
+<span style="font-style:italic;">... This is a personal message address to me in future ...</span><br/>
+<span style="font-weight:bold;">   What is my next programming language?</span><br/>
+<a href="http://scala.epfl.ch/" title="Scala">Scala</a> ,   <a href="http://research.microsoft.com/fsharp/fsharp.aspx" title="F#">F#</a> ,   <a href="http://www.haskell.org/haskellwiki/Haskell" title="Haskell">Haskell</a>   , <a href="http://caml.inria.fr/" title="OCaml">OCaml</a> or   <a href="http://www.erlang.org" title="Erlang">Erlang</a>?<br/>
+Yes, my next language will be <span style="font-style:italic;">functional</span>, and I will focus on improving my skills in <span style="font-style:italic;">concurrent programming</span> and <span style="font-style:italic;">distributed applications</span>. And here come the reasons for the choice of the above shortlisted languages:
+<ul>
+	<li>     I just experimented the threading system of Python ... that really not fair     guys, so I quit Python!</li>
+	<li>     Scala use the Java threading model, that's good as far as I know (and Scala     looks fine!);</li>
+	<li>     F# enable to use all .NET library so I could experimented Tao on Mono (.NET     threading is also good, IronPython rocks);</li>
+	<li>     Haskell is pure ... I'm curious to understand those mysterious monads;</li>
+	<li>     OCaml mixes functional and imperative ... really efficient and yet simple;</li>
+	<li>     Erlang embed asynchronous model inside the language ... concurrent and yet     simple.</li>
+</ul>
+<p style="font-weight:bold;">&nbsp;</p>
+<strong>Why concurrent programming? Why distributed?</strong><br/>
+Nowadays computers aim to solve complex systems: large amount of data to process, large number of interactions, or naturally distributed systems. Parrallelism and distribution seems to be in the pipeline with multi-core processors and clusters supported onto a network more and more efficient (optic-fiber at home by example). Without looking at language theory (see <a href="http://lambda-the-ultimate.org/node/1805" title="Future of software design?">Future of software design?</a>), my next language has to enable a software design with those intrinsic features: parallelism (data or computing) and distribution.
+<span style="font-weight:bold;"></span><br/>
+<span style="font-weight:bold;">And why functional?</span><br/>
+I don't really know ... for the fun??? I read a lot about Haskell recently; I just want to change my mind with another programming   paradigm, and I secretly hope that my functional code will be better optimized   on multicore machine. If you want real justification you may have a look at <a href="http://www.defmacro.org/ramblings/fp.html" title="Functional Programming For The Rest of Us">Functional Programming For The Rest of Us</a> or <a href="http://www.linuxjournal.com/article/8850" title="Everything Your Professor Failed to Tell You About Functional Programming">Everything Your Professor Failed to Tell You About Functional Programming</a>.<br/>
+<span style="font-weight:bold;">   Final choice of my future language</span><br/>
+Still have to choose one in the shortlisted choices, but with which criteria?
+Type inference is a must (coz above all, any good programmer has a special quality: he's lazy). But I don't see a strong typing as a must-have: it sure solves problem, but not all, and in the end you still rely on unittesting.<br/>
+Let's do a first cut in the shortlist based on personal assumption: .NET is a better platform than Java (wow!). So:
+<ul>
+	<li>remove Scala: F# offer same kind of possibilities using .NET;</li>
+	<li>remove OCaml: shares a common ML-like syntax with F# but F# offer .NET platform access where OCaml offer efficiency.</li>
+</ul>
+Haskell is pure but I prefer easy development aiming at concurrent and distributed programming, which is not part of the Haskell language itself. Then I have to choose between Erlang or F#: let's go for Erlang, let's concentrate on distributed development embedded in Erlang language. If later I really need/want .NET platform, it will still be good time to review all those choices adding new languages progress!

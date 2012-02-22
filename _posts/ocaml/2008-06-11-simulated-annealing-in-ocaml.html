@@ -1,0 +1,17 @@
+---
+layout: post-import
+title: "Simulated annealing in OCaml"
+categories: ['wp-import', 'ocaml']
+wpimport-url: "http://khigia.wordpress.com/2008/06/11/simulated-annealing-in-ocaml/"
+---
+I've been using this <a href="http://psychicorigami.com/2007/06/28/tackling-the-travelling-salesman-problem-simmulated-annealing/">python implementation</a> of <a href="http://en.wikipedia.org/wiki/Simulated_annealing">simulated annealing</a> to deduce Singapore bus service from a database of bus stops (see <a href="http://khigia.wordpress.com/2008/05/24/sg-bus-services-map/">previous</a> <a href="http://khigia.wordpress.com/2008/05/28/sg-bus-routes-following/">post</a>s about Google Map API).<br/>
+I wanted to play a little bit more with this algo and decided to port it to OCaml: you can find <a href="http://github.com/khigia/ocaml-anneal/tree/master">the code on GitHub</a>.<br/>
+As a first try, I wrote a direct code translation. Only few points differ:
+<ul>
+	<li>The OCaml code use a <a href="http://github.com/khigia/ocaml-anneal/tree/master/seq.ml">stream implementation</a> (lazy list) ... (mostly equivalent to my <a href="http://khigia.wordpress.com/2007/05/07/44/">previous</a> Erlang implementation).</li>
+	<li>The OCaml code uses array structure where Python uses list.</li>
+	<li>The OCaml implementation of function reversed_section do only one array reverse in all cases.</li>
+</ul>
+Result is quite ok. Without any optimization on the algo, the OCaml native code performed quite faster (around 10 times faster), meaning that solving the TSP problem for SG bus services took 40 minutes for OCaml version where the Python code ran for hours (of course we could improve this version too).<br/>
+The algo itself can be improve (I guestimate the time for SG map problem can be reduce by one more order of magnitude with the same simulated annealing approach).<br/>
+But in coming post (code is there, need time to clean it), I'll be looking at other interesting problems I found inside this one, especially on how to walk in solutions space in quasi-random order.

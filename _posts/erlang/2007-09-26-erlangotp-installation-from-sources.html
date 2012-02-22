@@ -1,0 +1,18 @@
+---
+layout: post-import
+title: "Erlang/OTP installation from sources"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/09/26/erlangotp-installation-from-sources/"
+---
+I'm probably missing something in Erlang/OTP installation from sources ... my goal is to install multiple version of OTP in user space.<br/>
+Here is one way to do it:
+<ol>
+	<li> remove any symlink if needed
+<code>rm /home/khigia/local/lib/erlang</code></li>
+	<li>apply the "normal" quick install steps for the new OTP version, let say otp-R11B5
+<code>cd /home/khigia/apps/otp-src-R11B5; ./configure --prefix=/home/khigia/local ; make; make install</code></li>
+	<li>modify the install to be version specific
+<code>mv /home/khigia/local/lib/erlang /home/khigia/local/lib/otp-R11B5
+ln -s /home/khigia/local/lib/otp-R11B5 /home/khigia/local/lib/erlang</code></li>
+</ol>
+Changing the symlink enable to switch Erlang/OTP version. There must be an easiest way ... how?

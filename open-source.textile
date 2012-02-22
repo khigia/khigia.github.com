@@ -1,0 +1,9 @@
+---
+layout: master
+title: Open-Source Projects
+---
+
+h2. Open-Source
+
+* "GitHub":http://github.com/khigia
+* "GoogleCode":http://code.google.com/u/lcoquelle

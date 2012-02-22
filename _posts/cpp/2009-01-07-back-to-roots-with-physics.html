@@ -1,0 +1,11 @@
+---
+layout: post-import
+title: "Back to roots ... with physics!"
+categories: ['wp-import', 'cpp']
+wpimport-url: "http://khigia.wordpress.com/2009/01/07/back-to-roots-with-physics/"
+---
+This blog is not completely abandoned ... I'm just buzy lazy those days.<br/>
+Just to relate my brief come back to roots: doing physics simulation in 3D ;).<br/>
+I've been playing with <a title="Irrlicht" href="http://irrlicht.sourceforge.net/">Irrlicht</a> as 3D framework. It's good, not to complex. But the API is not always easy (you're forced to use the irrlicht not-automatic counting ref). I haven't found doc about coordinate systems (orientation and angle's units) but it's using common practices in game engine. It's pretty fast, and the simple included demos help a lot to get started (Ogre3D don't come with simple examples).<br/>
+For the physics engine, I've used <a title="Bullet" href="http://www.bulletphysics.com/Bullet/wordpress/">Bullet</a>, and it's really pleasant to use! and result are great! I only quickly went through some part of the code, and it's great code, I think I will learn quite a few tricks of this code (e.g. how to avoid conditional branch ('if') to select between 2 unsigned integers ... and it even can be usefull for efficiency on some processor like Cell (maybe related to parallelism and pipelining?). No really, this is beautiful code, and if you just want to play a little bit with physics, using Bullet directly is more fun than <a title="PAL" href="http://www.adrianboeing.com/pal/index.html">PAL</a> (Physic Abstraction Layer).<br/>
+I'll post the code when/if my Domino Rally simu is done :) ... but without sound it's not good.

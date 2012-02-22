@@ -1,0 +1,10 @@
+---
+layout: post-import
+title: "advance backward?"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/08/03/advance-backward/"
+---
+I added a "welcoming bug" feature in <a href="http://code.google.com/p/adviserl">adviserl</a>: a simple save_files/0 function to backup the recommender data in a persistent manner.<br/>
+That was quick to write, and I really need it now that I begin to look at a lot of data. But it's the wrong way to do it: I need to synchronize the multiple servers before to make or restore the backup. Still wondering if I should have done that in a branch ...<br/>
+Anyway, it's here, and it works: if the application anvironment define few files where to save data, those files will be read and written when application start or stop respectively (you can use load_files/0 or save_files/0 whenever you want, but be careful that servers should not process anything else at the same time to avoid inconsistent state).<br/>
+Mnesia backend is becoming urgent now ... it's the next point on the <a href="http://code.google.com/p/adviserl/wiki/Roadmap">roadmap</a> :)

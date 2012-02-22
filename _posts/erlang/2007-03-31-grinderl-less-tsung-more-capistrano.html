@@ -1,0 +1,40 @@
+---
+layout: post-import
+title: "grinderl: less tsung, more capistrano"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/03/31/grinderl-less-tsung-more-capistrano/"
+---
+I decided to change the roadmap of the <a href="http://code.google.com/p/grinderl/">grinderl</a> project.<br/>
+It first application was to be a tiny load-test framework (at least a testing framework as I'm not sure it is efficient enough to create heavy load on a well design server). And I still have to finish the part of creating useful statistics from all the results.<br/>
+But now I think that I could implement a better node management API, and then grinderl can become one way to call code on remote host (not exactly as RPC since command are asynchronous and supervised by remote host). One application could be to install an external application on all remote host, or manage deployment like does <a href="http://manuals.rubyonrails.com/read/book/17">capistrano</a> (but with the full Erlang environment available!).<br/>
+So the new (of course, it's the first!) roadmap:
+<ul>
+	<li> Stabilize the current version:
+<ul>
+	<li> move test to become command</li>
+	<li> better handling of results sent by remote hosts</li>
+</ul>
+</li>
+	<li> Develop concurrently the remote node API and a UI:
+<ul>
+	<li> API to manage remote hosts
+<ul>
+	<li>use slave module</li>
+	<li>have a look at <a href="https://support.process-one.net/doc/display/ERL/Starting+a+set+of+Erlang+cluster+nodes">this how-to</a></li>
+	<li>can we install a minimal Erlang node on a remote machine through ssh ... using CEAN or erlware maybe?</li>
+</ul>
+</li>
+	<li>UI: network tools seems to require a network-able UI (probably using yaws) to be able to:
+<ul>
+	<li> see/manage nodes/hosts</li>
+	<li> send command to all/any hosts, monitor results (looks like each command will need a specialize UI)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+Conclusion:
+<ul>
+	<li>Sad note: nothing new in grinderl (this project don't seems to appeal my creativity)</li>
+	<li>Good note: simple project to learn Erlang distributed programming</li>
+</ul>

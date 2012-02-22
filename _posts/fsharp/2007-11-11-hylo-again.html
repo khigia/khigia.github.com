@@ -1,0 +1,54 @@
+---
+layout: post-import
+title: "Hylo again"
+categories: ['wp-import', 'fsharp']
+wpimport-url: "http://khigia.wordpress.com/2007/11/11/hylo-again/"
+---
+The <a href="http://khigia.wordpress.com/2007/11/11/morphing-ruby-to-erlang-just-for-fun/">previous blogpost</a> implements a hylomorphism in Erlang.<br/>
+Following is again the same in F#: but this is part of my exercices to learn F#, and I just begin to learn ... so the code is ... ergh, whatever.<br/>
+And I have no idea how to implement default values. Any advice?<br/>
+<pre><code>
+#light
+open Microsoft.FSharp.Collections.List;
+let rec hylo step till col inj v s =
+    if till s
+    then
+        v
+    else
+        let ns = step s in
+        let nv = inj v (col s) in
+        hylo step till col inj nv ns;
+let fact =
+    let step = fun x -> x - 1 in
+    let till = fun x -> x <= 1 in
+    let col = fun x -> x in
+    let inj = fun a x -> a * x in
+    hylo step till col inj 1;
+let evens n =
+    let step = fun x -> x + 2 in
+    let till = fun x -> x >= n in
+    let col = fun x -> x in
+    let inj = fun a x -> x :: a in
+    rev (hylo step till col inj [] 0);
+let to_bin n =
+    let step = fun x -> x / 2 in
+    let till = fun x -> x <= 0 in
+    let col = fun x -> x % 2 in
+    let inj = fun a x -> x :: a in
+    hylo step till col inj [] n;
+let expand l =
+    let rec duplicate c n a =
+        if n > 0
+        then duplicate c (n - 1) (c::a)
+        else a
+        in
+    let step = fun li -> tl li in
+    let till = fun li -> match li with |[] -> true |_ -> false in
+    let col = fun li -> match hd(li) with |(c,n) -> duplicate c n [] in
+    let inj = fun a x -> (x :: a) in
+    rev (hylo step till col inj [] l);
+do printf "fact(5)=%a\n" output_any (fact 5);
+do printf "evens(10)=%a\n" output_any (evens 10);
+do printf "to_bin(10)=%a\n" output_any (to_bin 10);
+do printf "expand([(1,2); (4,7)])=%a\n" output_any (expand [(1, 2); (4,7)]); 
+</code></pre> 

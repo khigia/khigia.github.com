@@ -1,0 +1,18 @@
+---
+layout: post-import
+title: "SG bus services map"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2008/05/24/sg-bus-services-map/"
+---
+Playing with the DB of SG bus stop <a href="http://khigia.tumblr.com/post/35900924/found-a-db-of-singapore-bus-stops-3732-stops">locations</a> and google map API.<br/>
+My goal is to try to draw the route of the bus services ... but the DB has no info about the order of the stops per service (there is info of which services stop for each bus stop). Following are some experiments, with display about bus service 124.<br/>
+First try was kind of funny (not unexpected!) as I draw the bus route "as stops are found in DB" ... which apparently is from left to right:
+<p style="text-align:center;"><a href="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-124_inner.jpg"><img class="alignnone size-medium wp-image-96 aligncenter" src="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-124_inner.jpg?w=300" alt="" width="300" height="152" /></a></p>
+So, to get a better idea of the bus route, I'm trying to draw the shortest path ... better and even quite enough:
+<p style="text-align:center;"><a href="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-124-shortest_inner.jpg"><img class="alignnone size-medium wp-image-97 aligncenter" src="http://khigia.files.wordpress.com/2008/05/screenshot-sgbus-124-shortest_inner.jpg?w=300" alt="" width="300" height="152" /></a></p>
+But of course this is inexact map as:
+<ol>
+	<li>this shortest route uses all bus stops without taking care of which ones are on the way to go or the way to go back (this data is not in my DB);</li>
+	<li>the length of the path does not depend of the road ... those are only straight lines!</li>
+</ol>
+But anyway, this give a better view of the bus service than nothing or a guide book of bus stop names ...

@@ -1,0 +1,16 @@
+---
+layout: post-import
+title: "Different DBMS"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/09/07/different-dbms/"
+---
+It's common knowledge that DBMS is a very important part of a fast scalable distributed systems as far as performance is concerned. But I often tend to forget it and blindly rely on well known relational DBMS. Recently I stumble upon the following other DBMS/discussions and the last one really opened my eyes:
+<ul>
+	<li>The Erlang/OTP come with <a href="http://www.erlang.org/doc/apps/mnesia/index.html">mnesia</a> allowing transaction on distributed DB. However it has been argue (note: this need some reference...) that distributed mnesia cannot scale (it needs some agreement between all nodes for transaction). For huge distributed system (or nodes on low network) the application has to maintain data consistency without relying on transaction. <a href="http://en.wikipedia.org/wiki/Berkeley_DB">Berkeley DB</a> seems to be the preferred way to go for this, but as I understand it, it is not a DBMS which manage distribution but a tool to help you to do so.</li>
+</ul>
+<ul>
+	<li><a href="http://couchdb.org/CouchDB/CouchDBWeb.nsf/Home?OpenForm">CouchDB</a> is one DBMS trying to handle the distribution of DB.</li>
+</ul>
+<ul>
+	<li>Also I just discover the terminology column-oriented DBMS through this (too?) simple <a href="http://en.wikipedia.org/wiki/Column-oriented_DBMS">wikipedia article</a>. Being used to R statistics system helped me to (try to) understand what it really is. At least I better understand why Google developed BigTable and I have to <a href="http://labs.google.com/papers/bigtable.html">read</a> or <a href="http://video.google.com/videoplay?docid=7278544055668715642">listen</a> more about it ...</li>
+</ul>

@@ -1,0 +1,21 @@
+---
+layout: post-import
+title: "Coming soon: an interesting post about ocamerl"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2008/01/08/coming-soon-an-interesting-post-about-ocamerl/"
+---
+Managed to have some time to play with ocamerl: ocaml node is now able to receive data from erlang node, and also send data to pid on connected nodes.<br/>
+I begin to understand what I'm doing, so that I will be able to clean the code and refactor some parts very soon.<br/>
+As example, <a href="http://erlocaml.googlecode.com/svn/trunk/lib/ocamerl/ocaml/ex/node_double.ml">an ocaml process</a> which multiply integer by 2! wow! What' an interesting example!<br/>
+<pre><code>
+bash> cd trunk/lib/ocamerl
+bash> ./ex/node_double >/dev/null 2>&1 &
+bash> erl -setcookie cookie  -sname erl
+erl@devhost 1> net_adm:ping(ocaml@devhost).
+pong
+erl@devhost 2> {bytwo, ocaml@devhost} ! {self(), 8}.
+{<0.37.0>,8}
+erl@devhost 3>  receive I -> io:format("Got: ~w~n", [I]) after 0 -> ko end.
+Got: 16
+ok</code></pre>
+Note: the ping was optional and the answer seems correct: 8 * 2 = 16!

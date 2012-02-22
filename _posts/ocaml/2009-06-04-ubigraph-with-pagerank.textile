@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Ubigraph view of pagerank result"
+categories: ['ocaml']
+---
+This post is a sequel to the previous post about visualization of random graph through Ubigraph.
+
+This time, I implemented a very simple pagerank algo ("functor Pr":http://github.com/khigia/socnet/tree) to set the size of the vertices.
+
+<pre><code>
+./socnet.byte -n 320 -ubi
+</code></pre>
+!{width:16cm}/images/rnd-graph-ubi-320-pr.jpg!
+
+<pre><code>
+./socnet.byte -n 520 -ubi
+</code></pre>
+!{width:16cm}/images/rnd-graph-ubi-520-pr.jpg!

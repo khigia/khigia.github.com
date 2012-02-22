@@ -1,0 +1,10 @@
+---
+layout: post-import
+title: "Could Erlang and ICE be friends?"
+categories: ['wp-import', 'ice']
+wpimport-url: "http://khigia.wordpress.com/2008/02/19/could-erlang-and-ice-be-friends/"
+---
+How could an Erlang process communicate with an <a href="http://www.zeroc.com/ice.html">ICE</a>-based application? The mix seems a bit strange (why would you need ICE when you already have Erlang ;) ) but without entering in details of why we would like to do so, let's consider how can we plug an Erlang sub-system in a ICE application.<br/>
+One way to go would be to write a <i>slice2erl</i> compiler! That's presumably lot of work. This kind of work is being done for OCaml in the <a href="http://oss.wink.com/hydro/">Hydro project</a> ... and is on my list of next things to play with.<br/>
+Another way to get Erlang talk to ICE application would be via a custom intermediate translator between the Erlang app and the ICE system (using some intermediate language having a complete interface with both Erlang and ICE, like C, Java, or Python); yes, this surely add complexity and slow down the full system, but efficiency of distributed application is more often bound by design than by runtime ;).<br/>
+Btw, as far as ease-of-development is concern, I have the same kind of feeling when comparing C++ to Python or ICE to Erlang :)

@@ -1,0 +1,21 @@
+---
+layout: post-import
+title: "Storing data into adviserl"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/07/21/storing-data-into-adviserl/"
+---
+The recommender system <a href="http://code.google.com/p/adviserl/">adviserl</a> manage all data (item and user, or source) through identifiers.<br/>
+Keeping those identifiers opaque for the whole system is possible, but as many prediction algorithms use integer identifiers (for matrix operations), adviserl provides an API in input of the system to generate integer ID if needed. Thus all identifiers in adviserl are integers, with an automatic conversion if needed.
+<code>erl&gt; rate(5, 1, {3,no_data}). # user 5 rate item 1 with score 3 (no rating data)
+erl&gt; rate("bill", "microsoft", {5, no_data}). # user "bill" rate item "microsoft" ...
+erl&gt; adv_items:id_from_key("microsoft").
+2 # item "microsoft" got ID 2
+erl&gt; adv_source:id_from_key("bill").
+1 # source "bill" got ID 1
+</code><br/>
+The API is also usefull to keep data about items or sources, which open the possibility to content-based recommendation algorithms. For this, it's enough to call the item/source API before to set related ratings. Any item/source has an integer ID, a external key (any Erlang term), and a data term (a property list in the following example).
+<code>erl&gt; adv_items:insert_new("linux", [{tags, ["oss", "os"]}]).
+{true,3} # bool if inserted or existing, integer is ID
+erl&gt; adv_items:object_from_id(3).
+{3,"linux",[{tags,["oss","os"]}]} # {ID, Key, Data}
+erl&gt; adviserl:rate("linus", "linux", {6,no_data}).</code>

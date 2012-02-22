@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Lock-free shared memory: 1 writer, N readers"
+categories: ['cpp']
+---
+In recent projects I have been involved with, a lock-free shared memory pattern is used quite often. I would like to describe it here, and if anyone can tell me the name for this pattern, I'll be very much grateful.
+
+This technic I'm going to describe can be used in the case of 1 writter and N readers. It shares some kind of idea from both a spin-lock and an STM (Software Transactional Memory) in the sense that the writer does not take a lock but write some kind of transaction state of the memory, and reader does not lock neither but keep reading in a loop (spin) until the transaction is coherent.
+
+All that will make more sense with some code (refer to note [1] and [2] for warning about this code; messing with memory model is very easy with lock-free stuffs). Suppose you have a shared data containing 2 values __x__ and __y__; first step is to add some kind of transaction markers:
+<pre><code>
+// beside of the data ...
+// 2 transaction markers v1 and v2 are added to the memory
+struct element_t {
+  volatile uint v1;
+  double x, y;
+  volatile uint v2;
+} elt;
+</code></pre>
+
+Next step is simple: as long as _v1_ is equal to _v2_, the memory is in coherent state; else we don't know what the writer is doing and nothing should be read. So writer has to maintain those markers as follow:
+<pre><code>
+// writter thread use marker v1 to start a transaction
+elt.v1 ++;
+// does some data updates
+elt.x = 42;
+elt.y = elt.x * 12;
+// and set marker v2 as end of transaction
+elt.v2 ++;
+</code></pre>
+
+When the reader access the data, it has to make sure that v1 and v2 are equals *and* do not change during the time reader access the memory. This can be done like following [3]:
+<pre><code>
+// reader thread keep reading the memory ...
+// until transaction markers are in "correct" state
+uint m1,m2;
+double x,y;
+do {
+  m1 = elt.v1;
+  x = elt.x;
+  y = elt.y;
+  m2 = elt.v2;
+} while(m1 != m2);
+// at this point, x and y have a correct value
+</code></pre>
+
+That's it!
+So, what the name of this pattern?
+
+By the way, if you like to read about shared memory concurrency, make sure to read the "Cilk++ blog":http://www.cilk.com/multicore-blog , it's a gem ;).
+
+
+fn1. The marker increment need to be an atomic operation, and you may want to use a memory barrier instruction in some cases.
+
+fn2. This code rely on operations order. In most of programming languages, order is never enforce by the language definition, and some compiler might try to reorder things (to improve cache or whatever). Even in C, the volatile does not protect the code. Only way I know to check this code: compile and test it! different optimization flag can result in different code. Check the generated code on your compiler/platform to make sure.</li>
+
+fn3. Of course you need to handle manually how to follow pointer in your data.

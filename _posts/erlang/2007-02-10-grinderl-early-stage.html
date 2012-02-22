@@ -1,0 +1,23 @@
+---
+layout: post-import
+title: "grinderl: early stage"
+categories: ['wp-import', 'erlang']
+wpimport-url: "http://khigia.wordpress.com/2007/02/10/grinderl-early-stage/"
+---
+I did it! I have try to code my first OTP applications following most of the recommendation of the documentation (and the French book <a href="http://www.eyrolles.com/Informatique/Livre/index.php?ouv_ean13=9782212110791&amp;societe=remond" target="_blank" title="//www.eyrolles.com/Informatique/Livre/index.php?ouv_ean13=9782212110791&amp;societe=remond" class="externalLink">Erlang programmation</a> was a great help).<br/>
+One of those applications became an opensource project: <strong>grinderl</strong>. I did blog a bit about it <a href="http://khigia.wordpress.com/2006/11/25/baby-steps-in-the-erlang-world/" target="_blank" title="//khigia.wordpress.com/2006/11/25/baby-steps-in-the-erlang-world/" class="externalLink">in this blog post</a>, and now it has evolved from the all-in-one-module code to a small ongoing project (<a href="http://code.google.com/p/grinderl/" target="_blank" title="//code.google.com/p/grinderl/" class="externalLink">hosted by</a> googlecode). To do that I used:
+<ul>
+	<li>application/supervisor/server/fsm/event ... all the generic modules: not complicated</li>
+	<li><a href="http://support.process-one.net/doc/display/CONTRIBS/EUnit" title="eunit">eunit</a>: simple enough, and tests should be compatible with the test_server application</li>
+	<li>dialyzer: wow! it can save a lot of time, especially because Erlang has no type system: a MUST.</li>
+	<li> appmon: great and easy to see your supervision tree</li>
+	<li> debugger: I still prefer to write message in the console ... please don't tell that to anybody!</li>
+	<li> edoc: I learned how to use it, but sadly it didn't teach me to write good documentation...</li>
+</ul>
+I may like to have a look at cover and profiling tools, I may want to learn about Erlang port, but I guess the two main points I missed are:
+<ul>
+	<li> mnesia: looks so great!</li>
+	<li> release handling: this is a tricky part of OTP application distribution I think!</li>
+</ul>
+And for the last one, I hope the <a href="http://code.google.com/p/sinan/" target="_blank" title="//code.google.com/p/sinan/" class="externalLink">sinan built system</a> can help me (<a href="http://erlangish.blogspot.com/2007/02/code-complete.html" target="_blank" title="//erlangish.blogspot.com/2007/02/code-complete.html" class="externalLink">Eric Merritt promised us a high level user documentation</a> soon).<br/>
+My only regret is that I haven't found a complete tutorial to go through all the steps of transformation of an Erlang program in an OTP application release. And that's too sad that I don't feel able to write one!

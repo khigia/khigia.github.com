@@ -1,0 +1,48 @@
+---
+layout: post-import
+title: "For the lost twitter sheeps"
+categories: ['wp-import', 'general']
+wpimport-url: "http://khigia.wordpress.com/2009/04/10/for-the-lost-twitter-sheeps/"
+---
+Tweet-tweet here, tweet-tweet there, here tweet, there tweet, ... everybody tweet! And you got to choose who to follow or you'll be quickly overwhelmed!<br/>
+<a href="http://mrtweet.net/">MrTweet </a>can help you there by proposing you some tweets to follow. How can he achieve that? Through this blog post, let's focus on the subject of recommending twitter users to follow to existing user.<br/>
+Disclamer: I have no accointance what's so ever with MrTweet, and absolutely no knowledge about it, nada; all the following are random thoughts; oh, and I have no accointance with <a href="http://twitter.com/">Twitter </a>neither!<br/>
+Let say you have access to all the tweets of the world [1], and you can know who's following who on twitter. How would you look for new user to follow?
+Obviously there are quite a few possibilities ... and some of them are probably yet to be invented. Traditionally, mining this kind of info can be done at 2 levels: (1) looking at the content and recommend to user U1 to follow user U2 if there is any correlation between tweets content of users U1 and U2; (2) second level is to look at the graph on connected communities and recommend user U1 to follow user U2 if they share some links in the graph.
+On top of this there are many refinements in what can be done to mine such information: focusing and differenciating static data and dynamic aspects of user behaviours, mixing approaches of content and meta data, looking for time-series correlation ... this is a vast domain.<br/>
+Following are some ideas about different way to implement MrTweet.
+<h2>The UserRank dictature</h2>
+Using a Pagerank-like algorithm to explore the graph of followers, you can obtain a global UserRank for all the twitter users.<br/>
+Why Pagerank? Well, this is probably not the best approach of the problem, as it extract a global knowledge of your data, where in this case we should focus on communities. But heck! I like PageRank, it's simple, and it's a good start to think about the problem. PageRank was the first <a href="http://citeseer.ist.psu.edu/page98pagerank.html">scientific article</a> that I study thoroughly, and it was  a ha-ha moment: simple to read, easy to understand, easy to implement ... computer science was possible! No need of linear algebra, matrix and eigenvector to understand it (it helps for the proof though :)). [2]<br/>
+So how to apply Pagerank to "tweeterers"? Well, following is one way to do it.<br/>
+For each user consider its followers as mark of interest. The algo define PageRank number Pr of user U as the weighted sum of the Pr of all its followers, where the weight is in inverse proportion of the number of people followed by the follower.<br/>
+That is, with some notations to make it hopefully clearer:
+<ul>
+	<li>Let Pr(U) be the PageRank of user U;</li>
+	<li>Let Fo(U) be the set of all user that U is following, and [Fo(U)] its cardinality;</li>
+	<li>Let Fi(U) be the set of all user that are following U;</li>
+	<li>PageRank is: Pr(Ux) = Sum(Pr(Un)/[Fo(Un)]), for all  Un in Fi(Ux).</li>
+</ul>
+Thus Pr is high if the user is followed by users which have a high Pr and are not following everybody! Easy enough but wait ... how to get the Pr of the followers? this is kind of a recursive definition!<br/>
+The beauty of the PageRank algo is that it propose an simple iterative solution to solve this problem: asume first that everybody as a Pr=Pr_0 of 1/N (N is the number of users, this give everybody a fair starting value), compute the new Pr_1 of each user using Pr_0 assumption, then compute the Pr_2 of each user given your Pr_1 assumption ... and iterate a few more times until the Pr stabilize, usually after few computations only (this is not magic but math ... which sometimes looks alike). If you like matrix and linear algebra, you can write the whole process as a loop which multiply a the vector of all PageRank by a square matrix of all 'follow-relations'.<br/>
+Now, all we have is a Pr for each user? then what? Who shall I follow? Well, use your network to discover it!<br/>
+Take all the people you are following, grab all the people they follow themselves, and remove your own sibling from this big set of people; sort them by Pr and you'll get to follow the most "popular" people linked to your network.<br/>
+We have a UserRank algo to recommend people to follow to any twitter user! Well, all this rely on assumption that being followed give the user some importance. And I don't know if this works, I haven't tried it! Maybe it can be done with google API and the twitter page of the user ;)<br/>
+Let explore another algo with another kind of idea.
+<h2>Following the Slope</h2>
+In fact, what we're looking for with MrTweet, is the same kind of recommendation as Amazon made popular: "users who like this also like that". Using the same meta-data as previously (the graph of followers), we can rephrase it as "user who follow Ux and Uy are also following Uz".<br/>
+Algo to solve those problems are usually classified as recommender systems (see the NetFlix for importance of those kind of algo). A big problem of those solution for web application is often scalability and dynamic nature. But let's pick one such recommender system and see what can be done for MrTweet problem.<br/>
+No surprise, let's look at <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.60.4503">SlopeOne</a> algorithm. The <a href="http://en.wikipedia.org/wiki/Slope_One">wikipedia page</a> explain it very simply and I surely can't do better. All we need to do is map the data to our problem. Let say that if user U1 follow user U2, this means user U1 rate user U2 with weight 1. Doing so, we'll have only rating of weight 1. This is ok for SlopeOne to give some result though.<br/>
+The main difference with previous method of UserRank is that this is not a global analysis of all the users but rely more on the network of the user to which you want to do the recommendation.<br/>
+Wanna real rating value to feed your SlopeOne algo? well, why not use the UserRank you defined previously as the rating value, and compute the SlopeOne prediction based on that? thus you would get as recommendation not the most popular user linked to your network but the most popular user liked by your network! Not so bad! Maybe yes, maybe not ... need to be tested!
+<h2>More than a graph?</h2>
+We've been looking at the graph of followers, which give recommendatons based on "neighborhood". Let's open the problem a bit more ...
+<ul>
+	<li>instead of using followers, we can look at the graph of replies</li>
+	<li>why not look at the tweet content? we could check correlation in keyword, or in the URL (even following the URL)?</li>
+	<li>why not cross data from twitter with data from other network? ... and I'm going to read about this just here: http://33bits.org/2009/03/19/de-anonymizing-social-networks :)</li>
+</ul>
+I don't know you, but this kind of problem delight me. But after all this thinking and no action, I'm now going to write some real code to do more than think about algo ;).<br/>
+[1] With N millions users, 7 tweets a day, 140 bytes a tweet in raw format ... storage is not that huge, even for few years. How many twitter users? where does seven come from? who care! engineers only need order of magnitude and units!<br/>
+[2] Pagerank is closely related to the hub and authorities: <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.120.3875">http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.120.3875</a> [3]<br/>
+[3] I know, all those ref are "old" :)

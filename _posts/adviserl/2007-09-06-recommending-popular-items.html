@@ -1,0 +1,9 @@
+---
+layout: post-import
+title: "Recommending popular items"
+categories: ['wp-import', 'adviserl']
+wpimport-url: "http://khigia.wordpress.com/2007/09/06/recommending-popular-items/"
+---
+The prediction module using Slope-One algorithm can compute popular items.<br/>
+In this implementation, popular items are not only the most frequent items. Each user's ratings defines some kind of relative order of a subset of items. The prediction module compute some kind of global order for all items by merging all "user subset's orders". This is actually using Slope-One algorithm for a user which would rate all items with same score.<br/>
+Popular items recommendation is useful for new user!
